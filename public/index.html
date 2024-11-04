@@ -1,0 +1,78 @@
+<html lang="es">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+	<link rel="stylesheet" href="style.css">
+	<title>Celuapuestas Barbi</title>
+</head>
+<body>
+	<div class="bck"></div>
+    <section id='bolillero'>
+	<h3>Sorteo</h3>
+	<div id="bolillas_limites">
+		<label for="desde">Desde</label>
+		<input type="number" id="desde" placeholder="Desde" min="1" value=1 style="font-size: 2em;">
+		<label for="hasta">Hasta</label>
+		<input type="number" id="hasta" placeholder="Hasta" min="1" style="font-size: 2em;">
+		<button id="sortear" class="btn">Sortear</button>
+	</div>
+	<div id="bolilla_resultado" style="display: flex; flex-direction: column; place-content: center; align-items: center; justify-content: center;">
+		<div id='titulo' style="font-size: 3em; ">Resultado</div>
+		<div id='bolilla' style="font-size: 3em; ">-</div>
+
+	</div>
+</section>
+
+
+<script>
+	document.addEventListener('DOMContentLoaded',function(){
+		$boton = document.getElementById('sortear');
+		document.getElementById('hasta').focus();
+
+		$boton.addEventListener('click',sortear);
+		
+		function sortear(){
+			desde = document.getElementById('desde');
+			hasta = document.getElementById('hasta');
+			
+			if(parseInt(desde.value) >= parseInt(hasta.value) ){
+				alert('La bolilla superior debe ser mayor a la bolilla inferior');
+				hasta.focus();
+				return;
+			}
+
+			try{
+				desde = validarBolilla('desde', desde.value);
+				hasta = validarBolilla('hasta', hasta.value);	
+			}catch(error){
+				alert(error.mensaje);
+				document.getElementById(error.campo).focus();
+				return;
+			}	
+			
+			$boton.disabled = true;
+			
+			timer = setInterval(function(){
+				document.getElementById('bolilla').textContent = Math.floor((Math.random()*( (hasta+1) -desde))+desde);
+			},50);
+			setTimeout( function(){
+				 clearInterval(timer);
+				 $boton.disabled = false;	
+			},2500);
+			
+		}
+
+		function validarBolilla(campo, valor){
+			if(!valor){
+				throw {mensaje:`Debe completar el campo '${campo}'`,campo}
+			}
+			if( isNaN(valor)){
+				throw {mensaje:`La bolilla introducida en el campo '${campo}' no es válida`,campo}
+			}
+			if(parseInt(valor) <= 0){
+				throw {mensaje:`La bolilla '${campo}' debe ser mayor o igual a 1`,campo}
+			}
+			return parseInt(valor);
+		}
+	})
+</script>
